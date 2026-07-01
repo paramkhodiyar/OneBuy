@@ -333,53 +333,45 @@ def execute_node(state: AgentState) -> Dict[str, Any]:
         if tool_name in tool_map
     ]
 
-    for _, _, step_id in runnable_tools:
+    for tool_name, tool_inst, step_id in runnable_tools:
         for step in steps:
             if step["id"] == step_id:
                 step["status"] = "running"
-    _emit_progress(state, steps, results)
+        _emit_progress(state, steps, results)
 
-    with ThreadPoolExecutor(max_workers=min(len(runnable_tools), 6) or 1) as executor:
-        future_map = {
-            executor.submit(tool_inst.search, query, location): (tool_name, step_id)
-            for tool_name, tool_inst, step_id in runnable_tools
-        }
-
-        for future in as_completed(future_map):
-            _, step_id = future_map[future]
-            try:
-                items = future.result()
-                if items:
-                    for item in items:
-                        results.append(item.to_dict())
-                else:
-                    results.append({
-                        "store": display_names.get(future_map[future][0], future_map[future][0].capitalize()),
-                        "price": -1,
-                        "delivery": "-",
-                        "coupons": "-",
-                        "finalCost": -1,
-                        "status": "not_verified",
-                        "note": "The store page did not return parseable products in this automated check."
-                    })
-                status = "completed"
-            except Exception:
+        try:
+            items = tool_inst.search(query, location)
+            if items:
+                for item in items:
+                    results.append(item.to_dict())
+            else:
                 results.append({
-                    "store": display_names.get(future_map[future][0], future_map[future][0].capitalize()),
+                    "store": display_names.get(tool_name, tool_name.capitalize()),
                     "price": -1,
                     "delivery": "-",
                     "coupons": "-",
                     "finalCost": -1,
                     "status": "not_verified",
-                    "note": "The automated store check failed before prices could be verified."
+                    "note": "The store page did not return parseable products in this automated check."
                 })
-                status = "failed"
+            status = "completed"
+        except Exception:
+            results.append({
+                "store": display_names.get(tool_name, tool_name.capitalize()),
+                "price": -1,
+                "delivery": "-",
+                "coupons": "-",
+                "finalCost": -1,
+                "status": "not_verified",
+                "note": "The automated store check failed before prices could be verified."
+            })
+            status = "failed"
 
-            for step in steps:
-                if step["id"] == step_id:
-                    step["status"] = status
-            _emit_progress(state, steps, results)
-                        
+        for step in steps:
+            if step["id"] == step_id:
+                step["status"] = status
+        _emit_progress(state, steps, results)
+
     return {"results": results, "steps": steps}
 
 def aggregate_node(state: AgentState) -> Dict[str, Any]:
