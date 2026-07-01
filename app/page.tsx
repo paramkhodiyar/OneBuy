@@ -11,6 +11,7 @@ import {
   HelpCircle,
   AlertCircle
 } from "lucide-react";
+import Image from "next/image";
 import SearchBar from "@/components/SearchBar";
 import ThinkingCard, { TaskStep } from "@/components/ThinkingCard";
 import RecommendationCard from "@/components/RecommendationCard";
@@ -360,9 +361,7 @@ export default function Home() {
     <div className="min-h-screen bg-[#FAFAF8] text-[#111111] font-sans antialiased selection:bg-teal-50 selection:text-teal-900">
       <header className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between border-b border-gray-200/50">
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 rounded-lg bg-teal-700 flex items-center justify-center text-white font-bold text-lg">
-            O
-          </div>
+          <Image src="/logo.png" alt="OneBuy Logo" width={32} height={32} className="rounded-lg object-contain bg-white" />
           <span className="text-xl font-bold tracking-tight">OneBuy</span>
         </div>
         <div className="flex items-center space-x-4">
