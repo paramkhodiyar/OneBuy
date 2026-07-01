@@ -1,0 +1,10 @@
+{
+  "user_default": {
+    "preferredStore": "Blinkit",
+    "preferredPayment": "UPI",
+    "isPrime": true,
+    "location": "Bangalore, IN",
+    "ordersEvening": true,
+    "preferredDeliveryTime": "Immediate"
+  }
+}
