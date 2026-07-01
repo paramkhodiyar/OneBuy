@@ -19,7 +19,7 @@ import BrandOptions, { BrandOption } from "@/components/BrandOptions";
 import ReasoningCard from "@/components/ReasoningCard";
 import UserProfile, { LocationMemory, UserMemory } from "@/components/UserProfile";
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 type LocationStatus = "locating" | "ready" | "error";
 type BrandStrategy = {
@@ -550,7 +550,7 @@ export default function Home() {
                 <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">FastAPI Endpoint</label>
                 <input
                   type="text"
-                  defaultValue="http://localhost:8000"
+                  defaultValue={API_BASE}
                   disabled
                   className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm bg-gray-50 text-gray-400 cursor-not-allowed"
                 />
